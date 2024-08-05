@@ -1,3 +1,7 @@
+Run.md
+docker/dfres.yaml
+# ./api/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
