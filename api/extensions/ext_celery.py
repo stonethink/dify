@@ -3,6 +3,8 @@ from datetime import timedelta
 from celery import Celery, Task
 from flask import Flask
 
+from configs import dify_config
+
 
 def init_app(app: Flask) -> Celery:
     class FlaskTask(Task):
@@ -10,11 +12,21 @@ def init_app(app: Flask) -> Celery:
             with app.app_context():
                 return self.run(*args, **kwargs)
 
+    broker_transport_options = {}
+
+    if dify_config.CELERY_USE_SENTINEL:
+        broker_transport_options = {
+            "master_name": dify_config.CELERY_SENTINEL_MASTER_NAME,
+            "sentinel_kwargs": {
+                "socket_timeout": dify_config.CELERY_SENTINEL_SOCKET_TIMEOUT,
+            },
+        }
+
     celery_app = Celery(
         app.name,
         task_cls=FlaskTask,
-        broker=app.config["CELERY_BROKER_URL"],
-        backend=app.config["CELERY_BACKEND"],
+        broker=dify_config.CELERY_BROKER_URL,
+        backend=dify_config.CELERY_BACKEND,
         task_ignore_result=True,
     )
 
@@ -27,11 +39,12 @@ def init_app(app: Flask) -> Celery:
     }
 
     celery_app.conf.update(
-        result_backend=app.config["CELERY_RESULT_BACKEND"],
+        result_backend=dify_config.CELERY_RESULT_BACKEND,
+        broker_transport_options=broker_transport_options,
         broker_connection_retry_on_startup=True,
     )
 
-    if app.config["BROKER_USE_SSL"]:
+    if dify_config.BROKER_USE_SSL:
         celery_app.conf.update(
             broker_use_ssl=ssl_options,  # Add the SSL options to the broker configuration
         )
@@ -43,7 +56,7 @@ def init_app(app: Flask) -> Celery:
         "schedule.clean_embedding_cache_task",
         "schedule.clean_unused_datasets_task",
     ]
-    day = app.config["CELERY_BEAT_SCHEDULER_TIME"]
+    day = dify_config.CELERY_BEAT_SCHEDULER_TIME
     beat_schedule = {
         "clean_embedding_cache_task": {
             "task": "schedule.clean_embedding_cache_task.clean_embedding_cache_task",
