@@ -109,7 +109,7 @@ class CodeExecutionSandboxConfig(BaseSettings):
     )
 
     CODE_MAX_PRECISION: PositiveInt = Field(
-        description="mMaximum number of decimal places for floating-point numbers in code execution",
+        description="Maximum number of decimal places for floating-point numbers in code execution",
         default=20,
     )
 
@@ -216,6 +216,11 @@ class FileUploadConfig(BaseSettings):
         default=20,
     )
 
+    WORKFLOW_FILE_UPLOAD_LIMIT: PositiveInt = Field(
+        description="Maximum number of files allowed in a workflow upload operation",
+        default=10,
+    )
+
 
 class HttpConfig(BaseSettings):
     """
@@ -281,6 +286,26 @@ class HttpConfig(BaseSettings):
         default=None,
     )
 
+    SSRF_DEFAULT_TIME_OUT: PositiveFloat = Field(
+        description="The default timeout period used for network requests (SSRF)",
+        default=5,
+    )
+
+    SSRF_DEFAULT_CONNECT_TIME_OUT: PositiveFloat = Field(
+        description="The default connect timeout period used for network requests (SSRF)",
+        default=5,
+    )
+
+    SSRF_DEFAULT_READ_TIME_OUT: PositiveFloat = Field(
+        description="The default read timeout period used for network requests (SSRF)",
+        default=5,
+    )
+
+    SSRF_DEFAULT_WRITE_TIME_OUT: PositiveFloat = Field(
+        description="The default write timeout period used for network requests (SSRF)",
+        default=5,
+    )
+
     RESPECT_XFORWARD_HEADERS_ENABLED: bool = Field(
         description="Enable or disable the X-Forwarded-For Proxy Fix middleware from Werkzeug"
         " to respect X-* headers to redirect clients",
@@ -317,6 +342,16 @@ class LoggingConfig(BaseSettings):
     LOG_FILE: Optional[str] = Field(
         description="File path for log output.",
         default=None,
+    )
+
+    LOG_FILE_MAX_SIZE: PositiveInt = Field(
+        description="Maximum file size for file rotation retention, the unit is megabytes (MB)",
+        default=20,
+    )
+
+    LOG_FILE_BACKUP_COUNT: PositiveInt = Field(
+        description="Maximum file backup count file rotation retention",
+        default=5,
     )
 
     LOG_FORMAT: str = Field(
@@ -559,6 +594,11 @@ class DataSetConfig(BaseSettings):
     DATASET_OPERATOR_ENABLED: bool = Field(
         description="Enable or disable dataset operator functionality",
         default=False,
+    )
+
+    TIDB_SERVERLESS_NUMBER: PositiveInt = Field(
+        description="number of tidb serverless cluster",
+        default=500,
     )
 
 
