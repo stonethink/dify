@@ -80,7 +80,7 @@ const FileItem = ({
           }
         </div>
         {
-          showDownloadAction && (
+          showDownloadAction && url && (
             <ActionButton
               size='m'
               className='hidden group-hover/file-item:flex absolute -right-1 -top-1'
@@ -98,6 +98,7 @@ const FileItem = ({
             <ProgressCircle
               percentage={progress}
               size={12}
+              className='shrink-0'
             />
           )
         }
